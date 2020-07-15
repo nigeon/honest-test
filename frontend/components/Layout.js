@@ -14,7 +14,7 @@ const Layout = props => {
             <Navbar.Brand href="/">Honest Test</Navbar.Brand>
 
             <Nav className="ml-auto">
-              <Nav.Link className="nav-link" href="//github.com/nigeon/honest-test" target="_blank"><Octicon icon={MarkGithubIcon} /></Nav.Link>
+              <Nav.Link className="nav-link" href="//github.com/nigeon/honest-test" target="_blank"><MarkGithubIcon /></Nav.Link>
             </Nav>
           </Container>
         </Navbar>

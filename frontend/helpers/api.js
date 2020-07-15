@@ -1,6 +1,4 @@
-const apiConfig = {
-  host: 'http://localhost:1337'
-};
+const apiHost = 'http://localhost:1337';
 
 export const encodeParams = (params) => Object.keys(params).map((key) => {
   return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
@@ -34,11 +32,11 @@ class Api {
   }
 
   userSignup = async (data) => {
-    return await this.executeCall('POST', `${apiConfig.host}/users/signup`, data);
+    return await this.executeCall('POST', `${apiHost}/users/signup`, data);
   };
 
   userLogin = async (data) => {
-    return await this.executeCall('POST', `${apiConfig.host}/users/login`, data);
+    return await this.executeCall('POST', `${apiHost}/users/login`, data);
   };
 
   apiErrorsToFormik = (errors) => {
