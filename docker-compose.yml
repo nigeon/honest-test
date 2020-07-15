@@ -1,0 +1,44 @@
+version: '3'
+services:
+  backend:  
+    build: ./backend
+    volumes:
+      - ./backend/:/app/backend
+      - ./backend/node_modules:/app/backend/node_modules
+    command: >
+              bash -c "npm i &&
+              npm run dev"
+    ports:
+      - "1337:1337"
+    environment:
+      NODE_ENV: local
+    depends_on:
+      - database
+  frontend: 
+      build: ./frontend
+      volumes:
+        - ./frontend/:/app/frontend
+        - ./frontend/node_modules:/app/frontend/node_modules
+      command: >
+                bash -c "npm i &&
+                npm run dev"
+      stdin_open: true
+      ports:
+        - "3000:3000"
+      environment:
+        NODE_ENV: local
+      depends_on:
+        - backend
+  database:
+    image: "postgres"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: honest
+    volumes:
+      - data-volume:/var/lib/db
+volumes:
+  data-volume:
+    driver: "local"
