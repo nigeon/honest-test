@@ -1,6 +1,8 @@
 import * as Koa from 'koa';
 import * as Router from 'koa-router';
-import { getManager } from 'typeorm';
+import { DefaultState, Context } from 'koa';
+import * as passport from 'koa-passport';
+import { getManager, Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { classToClass } from 'class-transformer';
@@ -8,7 +10,7 @@ import { classToClass } from 'class-transformer';
 const routerOpts: Router.IRouterOptions = {
   prefix: '/users',
 };
-const router: Router = new Router(routerOpts);
+const router = new Router<DefaultState, Context>(routerOpts);
 
 router.post('/signup', async (ctx: Koa.Context) => {
   if (ctx.request.body.password !== undefined
@@ -45,5 +47,23 @@ router.post('/login', async (ctx: Koa.Context) => {
     token: User.getLoginToken(user),
   };
 });
+
+router.get('/:id', 
+  passport.authenticate('jwt', { session: false }),
+  async (ctx: Koa.Context) => {
+    if (ctx.params.id !== ctx.state.user.id) {
+      throw new Error('Only logged in users can get their account');
+    }
+
+    const userRepository: Repository<User> = getManager().getRepository(User);
+    const user: User = await userRepository.findOneOrFail({
+      where: { id: ctx.params.id },
+    });
+
+    ctx.body = {
+      user: classToClass(user),
+    };
+});
+
 
 export default router;

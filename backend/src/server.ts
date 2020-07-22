@@ -3,6 +3,8 @@ import config from './config';
 import * as HttpStatus from 'http-status-codes';
 import * as Koa from 'koa';
 import * as bodyParser from 'koa-bodyparser';
+import * as passport from 'koa-passport';
+import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 
 const cors = require('@koa/cors');
 
@@ -28,6 +30,18 @@ app.use(async (ctx: Koa.Context, next: () => Promise<any>) => {
   }
 });
 
+// Configuring Authentication
+const opts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: config.JWT_SECRET,
+};
+passport.use(
+  new JwtStrategy(opts, (jwtPayload, done) => {
+    done(null, jwtPayload);
+  }),
+);
+
+//Routes
 app.use(usersController.routes());
 app.use(usersController.allowedMethods());
 
